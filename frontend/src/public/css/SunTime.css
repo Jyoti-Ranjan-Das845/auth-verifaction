@@ -1,0 +1,8 @@
+.suntime{
+    
+    height: 10rem;
+    width: 17rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;   
+}

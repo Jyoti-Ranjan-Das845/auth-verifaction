@@ -1,0 +1,10 @@
+.addition{
+    margin-top: 5rem;
+    height: 27rem;
+    width: 17rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    /* background-color: rgba(255, 0, 0, 0.06); */
+}
