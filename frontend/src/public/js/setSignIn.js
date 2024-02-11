@@ -1,12 +1,12 @@
 import axios from "axios";
 
-const setSignUpAuth = async (username, email, pass) => {
-    console.log("inside sign in");
-    const data = { username: username, email: email,  password: pass };
+const setSignInAuth = async (username, pass) => {
+    console.log("inside in");
+    const data = { username: username, password: pass };
     console.log(data);
 
     try {
-        const response = await axios.post('http://localhost:8080/auth/user', data);
+        const response = await axios.post('http://localhost:8080/login/user', data);
         // console.log(response.status, response.data.message);
         return { code: response.status, msg: response.data.message };
     } catch (error) {
@@ -29,4 +29,4 @@ const setSignUpAuth = async (username, email, pass) => {
 };
 
 
-export default setSignUpAuth;
+export default setSignInAuth;

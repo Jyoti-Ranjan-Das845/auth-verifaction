@@ -127,6 +127,7 @@ passport.deserializeUser((data, done) => {
 //     next();
 // });
 
+let userdata;
 app.post('/auth/user', async (req, res) => {
     const { email, username, password } = req.body;
 
@@ -139,21 +140,28 @@ app.post('/auth/user', async (req, res) => {
 
         const registeredUser = await User.register(newUser, password);
         //  console.log(registeredUser);
-         req.login(registeredUser, (err) => {
-          if (err) {
-              console.error('Error logging in:', err);
-              res.status(500).send({ message: "Internal Server Error" });
-              return;
-          }
+        
+        // const user = userdata;
 
-          // At this point, the user is logged in, and req.user should be populated
-          console.log('inside login');
-          // console.info(req.user);
-          res.redirect("http://localhost:8080/auth/home");
-          // Redirect to another route where you can access req.user
-          
-      });
-
+        const newToken = new Token({
+          username: registeredUser.email,
+          userId: registeredUser._id,
+          token: crypto.randomBytes(32).toString('hex')
+            });
+      
+            await newToken.save();
+      
+            const url = `http://localhost:8080/user/verify/${newToken.token}`;
+      
+            await sendEmail('Verification Link', registeredUser.email, 'verify to login', 'OK', url)
+            .then(()=>{
+              res.status(200).send({ message: "An email has been sent for verification" });
+            })
+            .catch(()=>{
+              res.status(500).send({ message: "Internal server error email" });
+            })
+            // console.log(req.session.passport.user);
+            // console.log(user);
 
       
 
@@ -163,29 +171,9 @@ app.post('/auth/user', async (req, res) => {
     }
 });
 
-app.get('/auth/home', (req,res)=>{
-  const user = req.user;
-
-  // const newToken = new Token({
-  //   username: user.email,
-  //   userId: user._id,
-  //   token: crypto.randomBytes(32).toString('hex')
-  //     });
-
-  //     await newToken.save();
-
-  //     const url = `http://localhost:8080/user/verify/${newToken.token}`;
-
-  //     await sendEmail('Verification Link', email, 'verify to login', 'OK', url)
-  //     .then(()=>{
-  //       res.status(200).send({ message: "An email has been sent for verification" });
-  //     })
-  //     .catch(()=>{
-  //       res.status(500).send({ message: "Internal server error email" });
-  //     })
-      // console.log(req.session.passport.user);
-      console.log(req.user);
-});
+// app.get('/auth/home', async(req,res)=>{
+  
+// });
 
 app.get('/user/verify/:token', async (req, res) => {
   const token = req.params.token;
@@ -210,6 +198,22 @@ app.get('/user/verify/:token', async (req, res) => {
   Token.deleteOne({ _id: tokenDoc._id})
   .then(() => {
     console.log("Token deleted");
+
+    req.login(userget, (err) => {
+      if (err) {
+          console.error('Error logging in:', err);
+          res.status(500).send({ message: "Internal Server Error" });
+          return;
+      }
+
+      // At this point, the user is logged in, and req.user should be populated
+      console.log('inside login');
+      // console.info(req.user);
+      userdata = req.user;
+      // res.redirect("http://localhost:8080/auth/home");
+      // Redirect to another route where you can access req.user
+      
+   });
   })
   .catch((err) => {
     console.log("Error deleting token:", err);
@@ -245,10 +249,30 @@ app.get('/user/verify/:token', async (req, res) => {
 //   });
 // });
 
+app.post("/login/user", (req,res) =>{
+     
+  passport.authenticate('local', (err, user, info) => {
+    if (err) {
+        return next(err);
+    }
+    if (!user) {
+        // Handle failed login
+        return res.status(500).json({ message: 'User not exist' });
+    }
+    req.login(user, (err) => {
+        if (err) {
+            return next(err);
+        }
+        // Successful login
+        res.redirect('http://localhost:5173/weather');
+    }); 
+  })(req, res);
+});
 
 
 
-app.get('/status', isLogged, async (req,res) => {
+
+app.get('/status', async (req,res) => {
 //     const {email, pass} = req.body;
     
 //   User.find({username : email})
@@ -264,9 +288,14 @@ app.get('/status', isLogged, async (req,res) => {
 //     }
 //   })
 
- console.log(req.isAuthenticated());
- console.log(req.user);
- console.dir(req.session);
+if(userdata){
+  res.status(200).send("Ok");
+}else{
+  res.status(400).send("NO");
+}
+//  console.log(req.isAuthenticated());
+//  console.log(req.user);
+//  console.dir(req.session);
 
   //  const result = req.isAuthenticated();
   //  if(result){
@@ -281,7 +310,7 @@ app.get('/status', isLogged, async (req,res) => {
 app.get('/logout', async (req, res) => {
     
   await User.findOneAndUpdate(
-          { _id: req.user._id },
+          { _id: userdata.id },
           { $set: { verified: false } },
           { new: true }
         )
@@ -297,9 +326,12 @@ app.get('/logout', async (req, res) => {
             }
             // Redirect the user to a desired location after logout (e.g., home page)
             // res.redirect('/');
+            userdata = '';
+            console.log(userdata);
+            res.redirect('http://localhost:5173/');
         })
-        console.log(req.user);
-        res.redirect('http://localhost:5173/');
+    
+        
 
         })
         .catch((e)=>{

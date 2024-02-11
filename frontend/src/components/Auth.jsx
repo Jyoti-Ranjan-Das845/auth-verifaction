@@ -10,6 +10,7 @@ import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
 import { Icon } from '@mui/material';
 import setSignUpAuth from '../public/js/setSignUp.js';
+import setSignInAuth from '../public/js/setSignIn';
 
 function Auth(){
     const [username, setName] = useState('');
@@ -40,9 +41,10 @@ function Auth(){
     const handleClick = async() => {
         setBtnColor(!btnColor);
         // setClicked((prev) => prev);
+        console.log(username,email,pass,switchAuth, nameError);
     
     
-        if ((!nameError || switchAuth === 'signin') && !emailError && isValidPassword(pass) && email && pass) {
+        if (!nameError && !emailError && isValidPassword(pass) && (email || username) && pass) {
              
             // axios.post('http://localhost:8080/verify/check/do',{email : email, pass : pass})
             // .then()
@@ -52,7 +54,10 @@ function Auth(){
             // setAuth(name, email, pass);
             // console.log(name," ",email," ",pass) name asuchi
 
-            if(username){
+            if(switchAuth === 'signup'){
+              console.log("signup");
+
+              if(email){
                 await setSignUpAuth(username, email, pass)
                 .then((data) => {
                     setCode(data.code);
@@ -62,7 +67,23 @@ function Auth(){
                     setEmail('');
                      setPass('');
                 })
+              }
+            }else if (switchAuth === 'signin'){
+              console.log("signin")
+              if(username){
+                await setSignInAuth(username,pass)
+                .then((data) => {
+                  setCode(data.code);
+                  setMsg(data.msg);
+  
+                  setName('');
+                  setEmail('');
+                   setPass('');
+              })
+              }
             }
+
+
 
         } else {
             // If any field is empty, show the helper text for the empty field
@@ -218,8 +239,7 @@ function Auth(){
         noValidate
         auto="true"
         >
-          {
-            switchAuth == 'signup' ? <TextField
+         <TextField
             id="standard-basic0"
             label="Name"
             variant="standard"
@@ -240,8 +260,9 @@ function Auth(){
             FormHelperTextProps={{
               style: { color: 'white', display : nameError ? 'block' : 'none' }, // change helper text color to green
             }}
-          /> : ''
-          }
+          />
+          {
+            switchAuth == 'signup' ? 
         <TextField
           id="standard-basic1"
           label="Email Address"
@@ -251,7 +272,8 @@ function Auth(){
           required
           error={!isValidEmail(email) && emailError} // Check for email validity and error state
           helperText={!isValidEmail(email) && emailError ? 'Invalid email address' : ''}
-        />
+        /> : ''
+      }
         <TextField
   id="standard-basic2"
   label="Password"
