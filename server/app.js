@@ -15,7 +15,7 @@ import getCondition from './public/js/getCondition.js';
 import getWeather from './public/js/currCondition.js';
 import bodyParser from 'body-parser';
 
-const MONGO_URL = "mongodb://127.0.0.1:27017/techvista";
+const MONGO_URL = "mongodb+srv://paramjeetnpradhan:Paramjeet.826@cluster01.wmcwsfi.mongodb.net/DB2";
 
 async function main() {
   try {
