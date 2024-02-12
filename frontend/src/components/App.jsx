@@ -11,8 +11,6 @@ function App(){
     return(
         <>
           <div className="main-hold">
-            {/* <Weather /> */}
-            {/* <Signup /> */}
             <Authentication />
           </div>
         </>

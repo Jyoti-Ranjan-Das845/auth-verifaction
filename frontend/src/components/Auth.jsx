@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../public/css/Signup.css';
-import EmailSignUp from './EmailSignUp';
+// import EmailSignUp from './EmailSignUp';
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -12,7 +12,6 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { Icon } from '@mui/material';
 import setSignUpAuth from '../public/js/setSignUp.js';
 import setSignInAuth from '../public/js/setSignIn';
-// import Glogin from "./Glogin";
 
 function Auth(){
   const navigate = useNavigate();
@@ -25,38 +24,17 @@ function Auth(){
     // const [clicked, setClicked] = React.useState(true);
     const [switchAuth, setSwitch] = useState('signup');
     const [btnColor, setBtnColor] = useState(false);
-    const [isLogged, setLogged] = useState(false);
-  
     const [nameError, setNameError] = useState(false);
     const [emailError, setEmailError] = useState(false);
     const [isPasswordFocused, setIsPasswordFocused] = useState(false);
     const [isPasswordClicked, setIsPasswordClicked] = useState(false);
 
-    // useEffect(() => {
-    //     // Perform additional work whenever `yourState` is updated
-    //     if (code != '' & msg != '') {
-    //         // Do your additional work here
-    //         console.log('Your state is updated:', code , msg);
-    //         setName('');
-    //     }
-    // }, [code, msg]);
-
-
     const handleClick = async() => {
         setBtnColor(!btnColor);
-        // setClicked((prev) => prev);
         console.log(username,email,pass,switchAuth, nameError);
     
     
         if (!nameError && !emailError && isValidPassword(pass) && (email || username) && pass) {
-             
-            // axios.post('http://localhost:8080/verify/check/do',{email : email, pass : pass})
-            // .then()
-            // .catch((e) => {
-            //     console.log(e);
-            // })
-            // setAuth(name, email, pass);
-            // console.log(name," ",email," ",pass) name asuchi
 
             if(switchAuth === 'signup'){
               console.log("signup");
@@ -95,7 +73,7 @@ function Auth(){
 
 
         } else {
-            // If any field is empty, show the helper text for the empty field
+           
             if (!email) {
                 setEmailError(true);
             }
@@ -110,7 +88,6 @@ function Auth(){
       };
     
       const handleVisib = (event) => {
-        // event.stopPropagation();
          if(event){
             setVisib(!visib);
          }
@@ -118,10 +95,6 @@ function Auth(){
     
       const handleName = (event) => {
         setName(event.target.value);
-    
-        // if(Name){
-        //     Name(event.target.value);
-        // }
       };
     
       const handleEmail = (event) => {
@@ -129,18 +102,10 @@ function Auth(){
     
         const isValid = isValidEmail(event.target.value);
         setEmailError(!isValid);
-    
-        // if(Email){
-        //     Email(event.target.value);
-        // }
       };
     
       const handlePass = (event) => {
         setPass(event.target.value);
-    
-        // if(Pass){
-        //     Pass(event.target.value);
-        // }
       };
     
     
@@ -153,7 +118,6 @@ function Auth(){
       };
     
       const isValidEmail = (email) =>  {
-        // Basic email validation using regex
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
       };
@@ -173,59 +137,24 @@ function Auth(){
       const handlePasswordClick = () => {
         setIsPasswordClicked(true);
       };
+      const handleSwitch = (event) => {
+          // console.log('btn');
 
+          setName('');
+          setEmail('');
+          setPass('');
 
-    // const enterName = (text) => {
-    //     setName(text);
-    // }
-    
-    // const enterEmail = (text) => {
-    //     setEmail(text);
-    // }
+          if(event){
+              setSwitch((prev) => {
+                  if(prev === 'signin'){
+                      return 'signup'
+                  }else{
+                      return  'signin'
+                  }
+              });
+          }
+      }
 
-    // const enterPass = (text) => {
-    //     setPass(text);
-    // }
-
-    const handleSwitch = (event) => {
-        // console.log('btn');
-
-        setName('');
-        setEmail('');
-        setPass('');
-
-        if(event){
-            setSwitch((prev) => {
-                if(prev === 'signin'){
-                    return 'signup'
-                }else{
-                    return  'signin'
-                }
-            });
-        }
-    }
-
-
-    // const handleLog =(event) =>{
-    //   if(event) setLogged(true);
-    // }
-
-    // const handleGEmail = (data) => {
-    //   setEmail(data);
-    // }
-
-    // const handleGName = (data) => {
-    //   setName(data);
-    // }
-//  const enterBtn = (val) => {
-//         if(val) console.log(name, ' ',email, ' ', pass);
-//     }   
-
-   useEffect(()=>{
-
-      navigate("/weather");
-      console.log(email, username);
-   }, [isLogged]);
 
     return(
         <>
@@ -233,7 +162,7 @@ function Auth(){
       <div className="field-holder">
         <div className="auth-main">
             <p className="h2" style={{fontWeight : '600', fontFamily : 'poppins', fontSize : '2.4rem', marginBottom : '.1rem', textAlign :'center', color : 'white'}}>{switchAuth == 'signup' ? 'Sign Up' : 'Sign In'}</p>
-            {/* <hr style={{width : 'auto', backgroundColor : 'rgba(0, 0, 0, 0.35)',marginBottom : '1.6rem'}}/> */}
+           
               <Box
         component="form"
         sx={{
@@ -359,8 +288,6 @@ function Auth(){
         </Button>
       </Stack>
 
-      {/* <Glogin Email={handleGEmail} Name={handleGName} Logged={handleLog}/> */}
-
             <p style={{textAlign : 'center', fontSize : '.8rem', color  :'white'}}>{switchAuth == 'signup' ? 'Already have an account?' : 'Create new account?'} <a href="#" onClick={handleSwitch}>{switchAuth == 'signup' ? 'SignIn' : 'SignUp'}</a></p>
             {
                 code && msg ? 
@@ -368,17 +295,11 @@ function Auth(){
                     (
                         <Stack sx={{ width: '100%', backgroundColor: 'transparent' }} spacing={2}>
                             <Alert variant="filled" severity="success">{msg}</Alert>
-                            {/* <Alert severity="info">This is an info Alert.</Alert>
-                            <Alert severity="warning">This is a warning Alert.</Alert>
-                            <Alert severity="error">This is an error Alert.</Alert> */}
                         </Stack>
                     ) 
                   : code == 500 ? 
                     (
                         <Stack sx={{ width: '100%', backgroundColor: 'red' }} spacing={2}>
-                            {/* <Alert severity="success">This is a success Alert.</Alert>
-                            <Alert severity="info">This is an info Alert.</Alert>
-                            <Alert severity="warning">This is a warning Alert.</Alert> */}
                             <Alert variant="filled" severity="error">{msg}</Alert>
                         </Stack>
                     ) : ''
