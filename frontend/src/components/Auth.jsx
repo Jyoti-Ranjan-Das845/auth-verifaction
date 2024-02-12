@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../public/css/Signup.css';
 import EmailSignUp from './EmailSignUp';
 import * as React from 'react';
@@ -11,8 +12,10 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { Icon } from '@mui/material';
 import setSignUpAuth from '../public/js/setSignUp.js';
 import setSignInAuth from '../public/js/setSignIn';
+// import Glogin from "./Glogin";
 
 function Auth(){
+  const navigate = useNavigate();
     const [username, setName] = useState('');
     const [email, setEmail] = useState('');
     const [pass, setPass] = useState('');
@@ -22,6 +25,7 @@ function Auth(){
     // const [clicked, setClicked] = React.useState(true);
     const [switchAuth, setSwitch] = useState('signup');
     const [btnColor, setBtnColor] = useState(false);
+    const [isLogged, setLogged] = useState(false);
   
     const [nameError, setNameError] = useState(false);
     const [emailError, setEmailError] = useState(false);
@@ -79,6 +83,11 @@ function Auth(){
                   setName('');
                   setEmail('');
                    setPass('');
+
+                 if(data.code == 200){
+                  console.log("redirecting");
+                  navigate('/weather');
+                 }  
               })
               }
             }
@@ -196,9 +205,27 @@ function Auth(){
         }
     }
 
+
+    // const handleLog =(event) =>{
+    //   if(event) setLogged(true);
+    // }
+
+    // const handleGEmail = (data) => {
+    //   setEmail(data);
+    // }
+
+    // const handleGName = (data) => {
+    //   setName(data);
+    // }
 //  const enterBtn = (val) => {
 //         if(val) console.log(name, ' ',email, ' ', pass);
 //     }   
+
+   useEffect(()=>{
+
+      navigate("/weather");
+      console.log(email, username);
+   }, [isLogged]);
 
     return(
         <>
@@ -331,6 +358,8 @@ function Auth(){
           Submit
         </Button>
       </Stack>
+
+      {/* <Glogin Email={handleGEmail} Name={handleGName} Logged={handleLog}/> */}
 
             <p style={{textAlign : 'center', fontSize : '.8rem', color  :'white'}}>{switchAuth == 'signup' ? 'Already have an account?' : 'Create new account?'} <a href="#" onClick={handleSwitch}>{switchAuth == 'signup' ? 'SignIn' : 'SignUp'}</a></p>
             {

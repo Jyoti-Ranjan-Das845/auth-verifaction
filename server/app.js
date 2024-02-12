@@ -80,29 +80,34 @@ app.use(passport.session());
 //   }
 // ));
 
-passport.use('local', new LocalStrategy(
-  { usernameField: 'username', passwordField: 'password' },
-  async (username, password, done) => {
-    try {
-      const user = await User.authenticate(username, password);
+// passport.use('local', new LocalStrategy(
+//   { usernameField: 'username', passwordField: 'password' },
+//   async (username, password, done) => {
+//     try {
+//       console.log("inside stratergy")
+//       const user = await User.authenticate(username, password);
 
-      if (!user) {
-        return done(null, false, { message: 'Incorrect username or password.' });
-      }
+//       if (!user) {
+//         console.log("inside user");
+//         return done(null, false, { message: 'Incorrect username or password.' });
+//       }
 
-      // ... other verification checks as needed
-      if (!user.verified) {
-        return done(null, false, { message: 'User is not verified.' });
-      }
+//       // ... other verification checks as needed
+//       if (!user.verified) {
+//         console.log("inside verify");
+//         return done(null, false, { message: 'User is not verified.' });
+//       }
 
-      // If user is authenticated, **move the log statement here inside the callback:**
-      console.log('User authenticated:', user);
-      return done(null, user);
-    } catch (error) {
-      return done(error);
-    }
-  }
-));
+//       // If user is authenticated, **move the log statement here inside the callback:**
+//       console.log('User authenticated:', user);
+//       return done(null, user);
+//     } catch (error) {
+//       return done(error);
+//     }
+//   }
+// ));
+
+passport.use(User.createStrategy());
 
 
 
@@ -250,8 +255,10 @@ app.get('/user/verify/:token', async (req, res) => {
 // });
 
 app.post("/login/user", (req,res) =>{
+  console.log("inside route")
      
   passport.authenticate('local', (err, user, info) => {
+    console.log("inside auth");
     if (err) {
         return next(err);
     }
@@ -264,10 +271,22 @@ app.post("/login/user", (req,res) =>{
             return next(err);
         }
         // Successful login
-        res.redirect('http://localhost:5173/weather');
+        userdata = req.user;
+        
+        // Redirect to '/redirect' route
+        res.redirect('/redirect');
     }); 
-  })(req, res);
+  })(req, res)
 });
+
+// Define the '/redirect' route
+app.get('/redirect', (req,res) => {
+  console.log("redirected");
+  // Redirect to 'http://localhost:5173/weather'
+  // res.redirect('http://localhost:5173/weather');
+  res.status(200).send("Ok");
+});
+
 
 
 
@@ -289,7 +308,7 @@ app.get('/status', async (req,res) => {
 //   })
 
 if(userdata){
-  res.status(200).send("Ok");
+  res.status(200).send(userdata);
 }else{
   res.status(400).send("NO");
 }
@@ -336,6 +355,7 @@ app.get('/logout', async (req, res) => {
         })
         .catch((e)=>{
           console.log(e);
+          res.status(500).send("FAILED");
         }); 
   // Call the logout() function provided by Passport to clear the login session
     

@@ -8,6 +8,7 @@ const setSignInAuth = async (username, pass) => {
     try {
         const response = await axios.post('http://localhost:8080/login/user', data);
         // console.log(response.status, response.data.message);
+        console.log(response);
         return { code: response.status, msg: response.data.message };
     } catch (error) {
         // console.error(error);

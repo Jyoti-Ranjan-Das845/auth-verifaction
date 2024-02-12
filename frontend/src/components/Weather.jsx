@@ -8,6 +8,9 @@ import SunTime from './SunTime.jsx';
 import Additionals from './Additionals.jsx';
 import setLogOut from '../public/js/setLogOut';
 import { useNavigate } from 'react-router-dom';
+// import { googleLogout } from '@react-oauth/google';
+// import { GoogleLogin, useGoogleLogin } from '@react-oauth/google';
+// import { gapi } from 'gapi-script';
 
 function Weather(){
 //    const history = useHistory();
@@ -182,14 +185,116 @@ const navigate = useNavigate();
         // console.log('btn:',finalCondition);
     }
 
+//     const login=useGoogleLogin({
+//         onSuccess:async(response)=>{
+//             try{
+    
+//              const res = await axios.get(
+//                " https://www.googleapis.com/oauth2/v3/userinfo",
+               
+//                {
+//                 headers:{
+                    
+//                     Authorization: `Bearer ${response.access_token}`,
+//                 },
+//                }
+//              );
+//             //  setIsLog(true);
+//             //  setEmail(res.data.email);
+//             //  setName(res.data.given_name);
+//             return res.data.sub;
+    
+//              console.log(res.data);
+//             }catch(e){
+//                 console.log(e)
+//             }
+//         }
+//     })
+
+//  // Load the Google API library asynchronously
+//  function loadGoogleAPI() {
+//     return new Promise((resolve, reject) => {
+//       const script = document.createElement('script');
+//       script.src = 'https://apis.google.com/js/api.js';
+  
+//       script.onload = resolve;
+//       script.onerror = reject;
+  
+//       document.body.appendChild(script);
+//     });
+//   }
+  
+
+// // Initialize the Google API
+// async function initializeGoogleAPI() {
+//     await loadGoogleAPI()
+//     .then(() => {
+//         if (window.gapi && window.gapi.auth2) {
+//             return window.gapi.auth2.getAuthInstance();
+//           } else {
+//             throw new Error('Google API initialization failed.');
+//           }
+//     })
+//     // Check if gapi object is available before accessing it
+    
+//   }
+  
+
+// // Call this function before accessing the Google API
+// async function checkGoogleLoggedIn() {
+//     try {
+//       await initializeGoogleAPI()
+//       .then((u) => {
+//         const isGoogleLoggedIn = u.isSignedIn.get();
+//       console.log(isGoogleLoggedIn);
+//       })
+      
+//     } catch (error) {
+//       console.error('Error initializing Google API:', error);
+//     }
+//   }
+  
+
+// // Call the function to check if the user is logged in with Google
+// // checkGoogleLoggedIn();
+
+// async function handleOut() {
+//     const isLoggedIn = await checkGoogleLoggedIn();
+//     if (isLoggedIn) {
+//       googleLogout();
+//     }
+//   }
+  
+
+
     const handleOut = async () => {
-       await setLogOut()
-       .then((res)=>{
-          if(res.code == 200){navigate('/')};
-       }) 
-       .catch((e)=>{
-        console.log(e);
-       }) 
+
+
+        
+        // const data = login();
+
+        // if(data){
+        //     googleLogout();
+        // }else{
+
+        // const isGoogleLoggedIn = window.gapi.auth2.getAuthInstance().isSignedIn.get();
+
+        // if(isGoogleLoggedIn){
+        //     googleLogout();
+        // }else{
+
+            await setLogOut()
+            .then((res)=>{
+               if(res.code == 200){navigate('/')};
+            }) 
+            .catch((e)=>{
+             console.log(e);
+            }) 
+        // }
+        checkGoogleLoggedIn();
+        // googleLogout();
+            
+        // }
     }
 
     return(
